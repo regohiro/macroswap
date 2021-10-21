@@ -1,5 +1,5 @@
 [programs.localnet]
-blockswap = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+macroswap = "6AReeFQXs4i26mt8rGco188gX21cFTaqnhHpgxHaEH6j"
 
 [registry]
 url = "https://anchor.projectserum.com"
