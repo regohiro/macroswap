@@ -85,19 +85,6 @@ describe("MacroSwap Test", () => {
   });
 
   it("Initializes MacroSwap program", async () => {
-
-    // console.log(bumps);
-    // console.log(new BN(rate));
-    // console.log(provider.wallet.publicKey);
-    // console.log(macroMintAccount);
-    // console.log(poolMacro);
-    // console.log(wsolMintAccount);
-    // console.log(poolWsol);
-    // console.log(macroswapAccount);
-    // console.log(SystemProgram.programId);
-    // console.log(TOKEN_PROGRAM_ID);
-    // console.log(SYSVAR_RENT_PUBKEY);
-
     await program.rpc.initialize(
       bumps,
       new BN(rate),
