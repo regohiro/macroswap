@@ -128,8 +128,8 @@ describe("MacroSwap Test", () => {
   })
 
   describe("Basic tests", () => {
-    const wsolAmount = 10000;
-    const macroAmount = 10000 * rate;
+    const wsolAmount = 1000000000;
+    const macroAmount = 1000000000 * rate;
 
     let aliceWsolAccount: PublicKey = null;
     let aliceMacroAccount: PublicKey = null;
@@ -186,5 +186,12 @@ describe("MacroSwap Test", () => {
       expect(await getBalance(provider, aliceMacroAccount)).to.eq(macroAmount/2);
     })
 
+    it("Alice unwraps wsol", async () => {
+      const wsol = new Token(connection, NATIVE_MINT, TOKEN_PROGRAM_ID, payer);
+      await wsol.closeAccount(aliceWsolAccount, alice.publicKey, alice.publicKey, [alice]);
+      const balance = await connection.getBalance(alice.publicKey);
+
+      expect(balance).to.gte(wsolAmount/2);
+    });
   });
 });
