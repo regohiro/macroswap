@@ -29,6 +29,7 @@ pub mod macroswap {
     macroswap_account.wsol_mint = ctx.accounts.wsol_mint.key();
     macroswap_account.pool_macro = ctx.accounts.pool_macro.key();
     macroswap_account.pool_wsol = ctx.accounts.pool_wsol.key();
+    macroswap_account.pool_owner = ctx.accounts.pool_owner.key();
 
     Ok(())
   }
@@ -45,10 +46,10 @@ pub mod macroswap {
       return Err(ErrorCode::LowWSol.into());
     }
 
-    //PDA signer seed
+    //Get PDA signer seed of pool owner
     let pda_seeds = &[
-      b"pool_macro".as_ref(),
-      &[macroswap_account.bumps.pool_macro],
+      b"pool_owner".as_ref(),
+      &[macroswap_account.bumps.pool_owner],
     ];
 
     //Transfer WSOL from user to pool
@@ -82,8 +83,8 @@ pub mod macroswap {
 
     //Calculate amount of WSOL user is going to receive
     let value = amount / macroswap_account.rate;
-    //PDA signer seed
-    let pda_seeds = &[b"pool_wsol".as_ref(), &[macroswap_account.bumps.pool_wsol]];
+    //Get PDA signer seed of pool owner
+    let pda_seeds = &[b"pool_owner".as_ref(), &[macroswap_account.bumps.pool_owner]];
 
     //Transfer Macro from user to pool
     token::transfer(ctx.accounts.into_transfer_to_pool_macro_context(), amount)?;

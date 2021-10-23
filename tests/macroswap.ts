@@ -8,8 +8,7 @@ import {
   SystemProgram,
 } from "@solana/web3.js";
 import { expect } from "chai";
-
-const { web3 } = anchor;
+import { airdrop, getBalance, mintWrapTransfer, wrap } from "./utils";
 
 describe("MacroSwap Test", () => {
   // Configure the client to use the local cluster.
@@ -28,6 +27,7 @@ describe("MacroSwap Test", () => {
   //Token accounts
   let poolMacro: PublicKey = null;
   let poolWsol: PublicKey = null;
+  let poolOwner: PublicKey = null;
 
   //Admin accounts
   const payer = Keypair.generate();
@@ -36,24 +36,20 @@ describe("MacroSwap Test", () => {
   //User accounts
   const alice = Keypair.generate();
   const bob = Keypair.generate();
-  const charlie = Keypair.generate();
 
   //Other accounts / settings
   const macroswapAccount = Keypair.generate();
   let bumps: {
-    poolMacro: number,
-    poolWsol: number
+    poolMacro: number;
+    poolWsol: number;
+    poolOwner: number;
   } = null;
 
   const rate = 10;
 
   before(async () => {
     //Airdrop 10SOL (10^10 lamports) to payer
-    const airdropTx = await connection.requestAirdrop(
-      payer.publicKey,
-      10000000000
-    );
-    await connection.confirmTransaction(airdropTx, "confirmed");
+    await airdrop(provider, payer.publicKey, 10 ** 10);
 
     //Create Macro token mint account
     macroMint = await Token.createMint(
@@ -66,29 +62,35 @@ describe("MacroSwap Test", () => {
     );
     macroMintAccount = macroMint.publicKey;
 
-    //Set PDA for macro and wsol pools
-    const [_poolMacroPda, _poolMacroBump] = await PublicKey.findProgramAddress(
+    //Create PDA and its bump for macro token account (pool)
+    const [poolMacroPda, poolMacroBump] = await PublicKey.findProgramAddress(
       [Buffer.from(anchor.utils.bytes.utf8.encode("pool_macro"))],
       program.programId
     );
-
-    const [_poolWsolPda, _poolWsolBump] = await PublicKey.findProgramAddress(
+    //Create PDA and its bump for wsol token account (pool)
+    const [poolWsolPda, poolWsolBump] = await PublicKey.findProgramAddress(
       [Buffer.from(anchor.utils.bytes.utf8.encode("pool_wsol"))],
       program.programId
     );
-    poolMacro = _poolMacroPda;
-    poolWsol = _poolWsolPda;
+    //Create PDA and its bump for token accounts authority
+    const [poolOwnerPda, poolOwnerBump] = await PublicKey.findProgramAddress(
+      [Buffer.from(anchor.utils.bytes.utf8.encode("pool_owner"))],
+      program.programId
+    );
+
+    poolMacro = poolMacroPda;
+    poolWsol = poolWsolPda;
+    poolOwner = poolOwnerPda;
     bumps = {
-      poolMacro: _poolMacroBump,
-      poolWsol: _poolWsolBump
-    }
+      poolMacro: poolMacroBump,
+      poolWsol: poolWsolBump,
+      poolOwner: poolOwnerBump,
+    };
   });
 
-  it("Initializes MacroSwap program", async () => {
-    await program.rpc.initialize(
-      bumps,
-      new BN(rate),
-      {
+  describe("Initialization", () => {
+    it("Initializes MacroSwap program", async () => {
+      const tx = await program.rpc.initialize(bumps, new BN(rate), {
         accounts: {
           user: provider.wallet.publicKey,
           macroMint: macroMintAccount,
@@ -96,15 +98,93 @@ describe("MacroSwap Test", () => {
           wsolMint: wsolMintAccount,
           poolWsol,
           macroswapAccount: macroswapAccount.publicKey,
+          poolOwner,
           systemProgram: SystemProgram.programId,
           tokenProgram: TOKEN_PROGRAM_ID,
-          rent: SYSVAR_RENT_PUBKEY
+          rent: SYSVAR_RENT_PUBKEY,
         },
-        signers: [macroswapAccount]
-      }
-    );
-    // await connection.confirmTransaction(tx, "confirmed");
-  });
+        signers: [macroswapAccount],
+      });
+      await connection.confirmTransaction(tx, "confirmed");
+    });
+  
+    it("Funds the program", async () => {
+      //Fund 1,000,000 macro tokens to program
+      const macroAmount = 1_000_000 * 10 ** 9;
+      await macroMint.mintTo(
+        poolMacro,
+        mintAuthority.publicKey,
+        [mintAuthority],
+        macroAmount
+      );
+  
+      //Mint 1,000 SOL
+      const wsolAmount = 1_000 * 10 ** 9;
+      await mintWrapTransfer(provider, poolWsol, wsolAmount, payer);
+  
+      expect(await getBalance(provider, poolMacro)).to.eq(macroAmount);
+      expect(await getBalance(provider, poolWsol)).to.eq(wsolAmount);
+    });
+  })
 
-  it("Funds the program", async () => {});
+  describe("Basic tests", () => {
+    const wsolAmount = 10000;
+    const macroAmount = 10000 * rate;
+
+    let aliceWsolAccount: PublicKey = null;
+    let aliceMacroAccount: PublicKey = null;
+
+    it("Alice buys tokens", async () => {
+      await airdrop(provider, payer.publicKey, wsolAmount);
+      aliceWsolAccount = await wrap(
+        provider,
+        alice.publicKey,
+        wsolAmount,
+        payer
+      );
+      aliceMacroAccount = await macroMint.createAccount(alice.publicKey);
+  
+      const tx = await program.rpc.buyToken(new BN(macroAmount), {
+        accounts: {
+          user: alice.publicKey,
+          userWsol: aliceWsolAccount,
+          userMacro: aliceMacroAccount,
+          poolWsol,
+          poolMacro,
+          poolOwner,
+          macroswapAccount: macroswapAccount.publicKey,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+        signers: [alice],
+      });
+      await connection.confirmTransaction(tx, "confirmed");
+  
+      expect(await getBalance(provider, aliceWsolAccount)).to.eq(0);
+      expect(await getBalance(provider, aliceMacroAccount)).to.eq(macroAmount);
+    });
+
+    it("Alice sells tokens", async () => {
+      const transferAmount = (new BN(macroAmount)).div(new BN(2));
+      const tx = await program.rpc.sellToken(transferAmount, {
+        accounts: {
+          user: alice.publicKey,
+          userWsol: aliceWsolAccount,
+          userMacro: aliceMacroAccount,
+          poolWsol,
+          poolMacro,
+          poolOwner,
+          macroswapAccount: macroswapAccount.publicKey,
+          systemProgram: SystemProgram.programId,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+        signers: [alice]
+      })
+      await connection.confirmTransaction(tx, "confirmed");
+
+      expect(await getBalance(provider, aliceWsolAccount)).to.eq(wsolAmount/2);
+      expect(await getBalance(provider, aliceMacroAccount)).to.eq(macroAmount/2);
+    })
+
+  });
 });
