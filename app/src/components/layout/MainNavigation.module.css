@@ -1,0 +1,55 @@
+.header {
+  width: 100%;
+  height: 5rem;
+  background-color: #191b1f;
+  position: relative;
+}
+
+.logo {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  margin-left: 30px;
+  font-family: 'Arvo', serif;
+}
+
+.button {
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  transform: translate(0, -50%);
+  margin-right: 30px;
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: baseline;
+}
+
+.nav li {
+  margin-left: 2rem;
+}
+
+.nav a {
+  text-decoration: none;
+  font-size: 1.5rem;
+  text-decoration: underline;
+  /* color: #fcb8d2; */
+}
+
+.nav a:hover,
+.nav a:active,
+.nav a.active {
+  /* color: white; */
+  color: #fcb8d2;
+}

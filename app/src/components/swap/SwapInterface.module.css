@@ -1,0 +1,130 @@
+.main {
+  margin: 0 auto;
+  margin-top: 150px;
+  border-radius: 50px;
+  height: 350px;
+  width: 500px;
+  background-color: #191b1f;
+  position: relative;
+}
+
+.box {
+  position: absolute;
+  top: 30px;
+  width: 100%;
+}
+
+.inputGroup{
+  width: 90%;
+  margin: 0px auto;
+}
+
+.inputGroupText {
+  background-color: #191B1F;
+  border-color: #2C2F36;
+  color: #fff;
+  width: 27%;
+  font-size: large;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdownBtn {
+  width: 27%;
+  border-color: #2C2F36;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dropdownMenu {
+  padding: 0;
+  min-width: 125px !important;
+  background-color: #191B2F;
+}
+
+.dropdownItem {
+  margin: 5px 0;
+  padding-left: 20px;
+}
+
+.dropdownText{
+  color: #fff;
+  font-size: large;
+  display: flex;
+  align-items: center;
+}
+
+.dropdownItem:hover{
+  background-color: #2D212E;
+}
+
+.formControl {
+  background-color: #212429;
+  border-color: #2C2F36;
+  border-width: 2px;
+  height: 70px;
+  border-radius: 15px;
+  font-size: x-large;
+}
+
+#topFormControl {
+  background-color: #212429; 
+  color: #fff
+}
+
+#bottomFormControl {
+  background-color: #212429; 
+  color: #fff
+}
+
+#bottomFormControl:hover{
+  cursor: not-allowed;
+}
+
+.arrowBox {
+  width: 100%;
+  display: flex;
+  justify-content: center; 
+}
+
+.arrowBox h2{
+  margin: 2px 0px; 
+}
+
+.arrowBox h2:hover{
+  cursor: pointer;
+}
+
+.rateBox {
+  width: 100%;
+  height: 20px;
+  margin-top: 20px;
+  color: #788089;
+}
+
+.rateText {
+  padding-left: 30px;
+  float: left;
+}
+
+.rateValue {
+  padding-right: 30px;
+  float: right;
+}
+
+.reloadBtn {
+  margin-left: 10px;
+  margin-bottom: 3px;
+  font-size: 18px;
+}
+
+.reloadBtn:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+.ethLogo {
+  margin-left: 10px;
+}
