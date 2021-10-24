@@ -1,11 +1,8 @@
 import { JsonRpcSigner } from "@ethersproject/providers";
 import { ContractTransaction } from "@ethersproject/contracts";
 import { BigNumber } from "ethers";
-import { getDefaultProvider } from "../connectors";
 import {
-  dexAddr,
   getDexInstance,
-  getTokenInstance,
   TokenType,
   getTokenAddr,
 } from "../contracts";
@@ -18,23 +15,6 @@ export const getPrice = async (tokenType: TokenType): Promise<BigNumber> => {
   const tokenAddr = getTokenAddr(tokenType);
   const priceBN = await dex.getPrice(tokenAddr);
   return priceBN;
-};
-
-export const getBalanceAllownace = async (
-  userAddr: string,
-  tokenType: TokenType | "Eth"
-): Promise<{ balance: BigNumber; allowance?: BigNumber }> => {
-  const provider = getDefaultProvider();
-
-  if (tokenType === "Eth") {
-    const balance = await provider.getBalance(userAddr);
-    return { balance };
-  } else {
-    const token = await getTokenInstance(provider, tokenType);
-    const balance = await token.balanceOf(userAddr);
-    const allowance = await token.allowance(userAddr, dexAddr);
-    return { balance, allowance };
-  }
 };
 
 export const getAmount = async (
@@ -67,35 +47,6 @@ export const hasEnoughBalance = async (
   return userBalance.gte(amountWei) || false;
 };
 
-export const hasApprovedToken = async (
-  userAddr: string,
-  tokenType: TokenType,
-  value: number,
-  approvedAmount?: BigNumber
-): Promise<boolean> => {
-  const valueWei = toWei(value);
-  if (!approvedAmount) {
-    approvedAmount = (await getBalanceAllownace(userAddr, tokenType)).allowance;
-  }
-  return approvedAmount?.gte(valueWei) || false;
-};
-
-export const approveToken = async (
-  signer: JsonRpcSigner,
-  tokenType: TokenType
-): Promise<string> => {
-  const token = await getTokenInstance(signer, tokenType);
-  const approveAmount = await token.totalSupply();
-
-  try {
-    const approveTokenTx = await token.approve(dexAddr, approveAmount);
-    const { transactionHash: txHash } = await approveTokenTx.wait();
-    return txHash;
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
-
 export const swapToken = async (
   signer: JsonRpcSigner,
   tokenType: TokenType,
@@ -113,9 +64,7 @@ export const swapToken = async (
       check = await hasEnoughBalance(userAddr, "Eth", value);
       break;
     case "SellToken":
-      check =
-        (await hasEnoughBalance(userAddr, tokenType, value)) &&
-        (await hasApprovedToken(userAddr, tokenType, value));
+      check = await hasEnoughBalance(userAddr, tokenType, value);
       break;
   }
   if (check === false) {

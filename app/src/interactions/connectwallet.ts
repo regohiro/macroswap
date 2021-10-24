@@ -1,32 +1,9 @@
 import { getProvider, TSignerProvider } from "../connectors";
 import {
-  getNetworkData,
   networkId,
   web3Modal,
 } from "../connectors/network-config";
 import { initialState, IState } from "../state/user/reducers";
-
-const addNetwork = async (id: number): Promise<void> => {
-  const data = getNetworkData(id);
-
-  try {
-    await window.ethereum.request({
-      method: "wallet_switchEthereumChain",
-      params: [{ chainId: data?.chainId }],
-    });
-  } catch (error: any) {
-    if (error.code === 4902) {
-      try {
-        await window.ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [data],
-        });
-      } catch (error: any) {
-        alert("Failed to add network. Please switch to Rinkeby manually");
-      }
-    }
-  }
-};
 
 export const connectWallet = async () => {
   //@ts-ignore
@@ -64,15 +41,4 @@ export const disconnectWallet = async (
   } catch (error) {}
 
   return initialState;
-};
-
-export const checkSigner = async (signerOrProvider: TSignerProvider) => {
-  if (signerOrProvider.constructor.name === "JsonRpcSigner") {
-    try {
-      //@ts-ignore
-      await signerOrProvider.getAddress();
-    } catch (error) {
-      throw new Error("Connect Wallet!");
-    }
-  }
 };
