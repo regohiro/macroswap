@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Form, FormControl, InputGroup } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
-import { bindActionCreators } from "redux";
-// import { selectSwap, selectUser } from "../../state";
-// import * as swapActions from "../../state/swap/actions";
-// import * as userActions from "../../state/user/actions";
-// import * as popupActions from "../../state/popup/actions";
 import SolDropdown from "./SolDropdown";
 import styles from "./SwapInterface.module.css";
 import TokenDropdown from "./TokenDropdown";
@@ -15,17 +9,36 @@ import {
   swapToken,
 } from "../../interactions/swap";
 import { useAsync, usePrevious, useDidUpdateAsyncEffect } from "../../hooks";
-import { JsonRpcSigner } from "@ethersproject/providers";
-import { TokenType } from "../../contracts";
-// import { TSwapDirection } from "../../state/swap/reducers";
 import SwapButton from "../SwapButton";
 import { toWei } from "../../utils";
 import RateBox from "./RateBox";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 
 type TSwapDirection = "BuyToken" | "SellToken"
 
 const SwapInterface = (): JSX.Element => {
   const [swapDirection, setSwapDirection] = useState<TSwapDirection>("BuyToken");
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [isPayable, setPayable] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
+  const [input, setInput] = useState<number>(0);
+
+  const wallet = useWallet();
+  const walletModal = useWalletModal();
+
+  const onInputChange = (
+    e: React.ChangeEvent<typeof FormControl & HTMLInputElement>
+  ) => {
+    const inputValueNumber = Number(e.target.value);
+    if (inputValueNumber >= 0 && e.target.value) {
+      setInput(inputValueNumber);
+      setInputValue(e.target.value.toString());
+    } else {
+      setInput(0);
+      setInputValue(undefined);
+    }
+  }
 
   const onClickSwapDirection = () => {
     switch(swapDirection){
@@ -38,13 +51,25 @@ const SwapInterface = (): JSX.Element => {
     }
   }
 
+  const onClickSubmit = (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+
+    if(wallet.connected){
+      
+    }else{
+      walletModal.setVisible(true);
+    }
+  }
+
   const onClickReload = () => {
 
   }
 
   return (
     <main className={styles.main}>
-      <Form className={styles.box}>
+      <Form className={styles.box} onSubmit={onClickSubmit}>
         <InputGroup className={styles.inputGroup} id={styles.top}>
           <Form.Control
             className={styles.formControl}
@@ -56,10 +81,10 @@ const SwapInterface = (): JSX.Element => {
             step="any"
             autoComplete="off"
             autoCorrect="off"
-            // onChange={onInputChange}
+            onChange={onInputChange}
             onWheel={(e: any) => e.target.blur()}
-            // value={inputValue || ""}
-            // required={address ? true : false}
+            value={inputValue || ""}
+            required={wallet.connected ? true : false}
           />
           {swapDirection === "BuyToken" ? <SolDropdown /> : <TokenDropdown />}
         </InputGroup>
@@ -78,7 +103,11 @@ const SwapInterface = (): JSX.Element => {
           {swapDirection === "BuyToken" ? <TokenDropdown /> : <SolDropdown />}
         </InputGroup>
         <RateBox onClickReload={onClickReload} />
-        <SwapButton />
+        <SwapButton 
+          loading={isLoading || wallet.connecting}
+          payable={isPayable}
+          hasEntered={input ? true : false}
+        />
       </Form>
     </main>
   );

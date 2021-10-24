@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./MainNavigation.module.css";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import ConnectButton from "../ConnectButton";
 
 const MainNavigation: React.FC = () => {
   return (
@@ -10,7 +10,7 @@ const MainNavigation: React.FC = () => {
           <h1>MacroSwap</h1>
         </div>
         <div className={styles.button}>
-          <WalletMultiButton>Select Wallet</WalletMultiButton>
+          <ConnectButton/>
         </div>
       </header>
     </>

@@ -1,15 +1,15 @@
-import React from "react";
-import { useSelector } from "react-redux";
-// import { selectUser } from "../../state";
+import React, { useEffect } from "react";
 import styles from "./Footer.module.css";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const Footer = () => {
-  // const { address } = useSelector(selectUser);
+  const wallet = useWallet();
+  const address = wallet.publicKey?.toString();
 
   return (
     <footer className={styles.footer}>
       <span id={styles.creator}>Made by REGO350</span>
-      <span id={styles.address}>123456789</span>
+      <span id={styles.address}>{address}</span>
     </footer>
   );
 };
