@@ -129,7 +129,7 @@ describe("MacroSwap Test", () => {
 
   describe("Basic tests", () => {
     const wsolAmount = 1000000000;
-    const macroAmount = 1000000000 * rate;
+    const macroAmount = wsolAmount * rate;
 
     let aliceWsolAccount: PublicKey = null;
     let aliceMacroAccount: PublicKey = null;
