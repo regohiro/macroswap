@@ -1,30 +1,14 @@
-import { BigNumber, ethers } from "ethers";
+import { BN } from "@project-serum/anchor";
 
-export const toBN = (value: number): BigNumber => {
-  const valueString = value.toString();
-  const valueBN = BigNumber.from(valueString);
+export const toBN = (value: number, decimals = 0): BN => {
+  const valueNumber = value * 10 ** decimals;
+  const valueBN = new BN(valueNumber);
   return valueBN;
 };
 
-export const toWei = (value: number, decimals: number = 18): BigNumber => {
-  const valueString = value.toString();
-  const valueWeiBN = ethers.utils.parseUnits(valueString, decimals);
-  return valueWeiBN;
-};
-
-export const fromBN = (valueBN: BigNumber): number => {
-  const valueString = valueBN.toString();
-  const valueNumber = Number(valueString);
+export const fromBN = (valueBN: BN, decimals = 0): number => {
+  const valueNumber = valueBN.toNumber() / 10 ** decimals;
   return valueNumber;
 };
 
-export const fromWei = (
-  valueWeiBN: BigNumber,
-  decimals: number = 18
-): number => {
-  const valueString = ethers.utils.formatUnits(valueWeiBN, decimals);
-  const valueNumber = Number(valueString);
-  return valueNumber;
-};
-
-export const tenPow18 = toBN(10).pow(18);
+export const tenPow9 = toBN(10).pow(toBN(9));

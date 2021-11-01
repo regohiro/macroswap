@@ -1,7 +1,3 @@
-// Migrations are an early feature. Currently, they're nothing more than this
-// single deploy script that's invoked from the CLI, injecting a provider
-// configured from the workspace's Anchor.toml.
-
 import * as anchor from "@project-serum/anchor";
 import { Program, Provider } from "@project-serum/anchor";
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
@@ -96,6 +92,7 @@ const main = async () => {
   console.log("pool_wsol: " + poolWsol.toString());
   console.log("pool_macro: " + poolMacro.toString());
   console.log("pool_owner: " + poolOwner.toString());
+  console.log("macro_mint: " + macroMint.publicKey.toString());
   console.log("macroswap_account: " + macroswapAccount.publicKey.toString());
 };
 
