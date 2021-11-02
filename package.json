@@ -7,7 +7,8 @@
   "scripts": {
     "build": "anchor build",
     "test": "anchor test",
-    "script": "ts-node -r dotenv/config"
+    "script": "ts-node -r dotenv/config",
+    "start": "solana-test-validator"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.18.0",

@@ -11,7 +11,8 @@ import { airdrop } from "../tests/utils";
 import { IDL } from "../target/types/macroswap";
 
 const main = async () => {
-  const provider = Provider.local('http://127.0.0.1:8899', {
+  const rpcURL = process.env.RPC_URL || "";
+  const provider = Provider.local(rpcURL, {
     preflightCommitment: 'max',
     skipPreflight: true
   });

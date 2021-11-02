@@ -12,9 +12,9 @@ import { u64 } from "@solana/spl-token";
 import { toBN } from "../../utils";
 import { getSolBalance } from "../../interactions/sol";
 import { getMacroBalance } from "../../interactions/macro";
-import { buyTokenTx, sellTokenTx } from "../../interactions/macroswap";
+import { buyTokenTx, getRate, sellTokenTx } from "../../interactions/macroswap";
 import { Transaction } from "@solana/web3.js";
-import { getProvider } from "../../web3";
+import { getProvider, getReadOnlyProvider } from "../../web3";
 
 type TSwapDirection = "BuyToken" | "SellToken"
 
@@ -27,6 +27,7 @@ const SwapInterface = (): JSX.Element => {
   const [output, setOutput] = useState<number>(0);
   const [solBalance, setSolBalance] = useState<number>(0);
   const [macroBalance, setMacroBalance] = useState<u64>(new u64(0));
+  const [rate, setRate] = useState<number>(0);
 
   const wallet = useWallet();
   const anchorWallet = useAnchorWallet();
@@ -82,6 +83,9 @@ const SwapInterface = (): JSX.Element => {
   }
 
   const onClickReload = async () => {
+    const provider = getReadOnlyProvider(connection);
+    setRate(await getRate(provider));
+
     if(wallet.connected && wallet.publicKey !== null && anchorWallet){
       const provider = getProvider(anchorWallet, connection);
       setSolBalance(await getSolBalance(provider, wallet.publicKey));
@@ -92,15 +96,15 @@ const SwapInterface = (): JSX.Element => {
   useEffect(() => {
     switch(swapDirection){
       case "BuyToken":
-        setOutput(input * 100);
+        setOutput(input * rate);
         setPayable(solBalance >= input * 10**9);
         break;
       case "SellToken":
-        setOutput(input / 100);
+        setOutput(input / rate);
         setPayable(macroBalance.gte(toBN(input, 9)));
         break;
     }
-  }, [input, swapDirection, solBalance, macroBalance]);
+  }, [input, swapDirection, solBalance, macroBalance, rate]);
 
   useAsyncEffect(async () => {
     await onClickReload();
