@@ -1,5 +1,5 @@
 import * as anchor from "@project-serum/anchor";
-import { Program, BN } from "@project-serum/anchor";
+import { Program, BN, IdlAccounts } from "@project-serum/anchor";
 import { Token, TOKEN_PROGRAM_ID, NATIVE_MINT } from "@solana/spl-token";
 import {
   SYSVAR_RENT_PUBKEY,
@@ -9,6 +9,7 @@ import {
 } from "@solana/web3.js";
 import { expect } from "chai";
 import { airdrop, getBalance, mintWrapTransfer, wrap } from "./utils";
+import { Macroswap } from "../target/types/macroswap";
 
 describe("MacroSwap Test", () => {
   // Configure the client to use the local cluster.
@@ -17,7 +18,7 @@ describe("MacroSwap Test", () => {
   anchor.setProvider(provider);
 
   //Program
-  const program = anchor.workspace.Macroswap as Program;
+  const program = anchor.workspace.Macroswap as Program<Macroswap>;
 
   //Mint accounts
   let macroMint: Token = null;
@@ -105,7 +106,14 @@ describe("MacroSwap Test", () => {
         },
         signers: [macroswapAccount],
       });
+
       await connection.confirmTransaction(tx, "confirmed");
+    });
+
+    it("Has the correct setttings", async () => {
+      const _macroswapAccount = await program.account.macroSwapAccount.fetch(macroswapAccount.publicKey);
+      expect(_macroswapAccount.rate.toNumber()).to.eq(10);
+      expect(_macroswapAccount.poolOwner.toBase58()).to.eq(poolOwner.toBase58());
     });
   
     it("Funds the program", async () => {
