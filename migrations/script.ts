@@ -8,7 +8,7 @@ import {
   SYSVAR_RENT_PUBKEY,
 } from "@solana/web3.js";
 import { airdrop } from "../tests/utils";
-import idl from "../target/idl/macroswap.json";
+import { IDL } from "../target/types/macroswap";
 
 const main = async () => {
   const provider = Provider.local('http://127.0.0.1:8899', {
@@ -20,7 +20,7 @@ const main = async () => {
   const { connection } = provider;
 
   const programId = process.env.PROGRAM_ID || "";
-  const program = new Program(idl as anchor.Idl, programId, provider);
+  const program = new Program(IDL, programId, provider);
 
   const secretKey = new Uint8Array(
     process.env.SECRET_KEY.split(",").map((i) => Number(i))

@@ -12,9 +12,9 @@ import { u64 } from "@solana/spl-token";
 import { toBN } from "../../utils";
 import { getSolBalance } from "../../interactions/sol";
 import { getMacroBalance } from "../../interactions/macro";
-import { getProvider } from "../../connectors";
 import { buyTokenTx, sellTokenTx } from "../../interactions/macroswap";
 import { Transaction } from "@solana/web3.js";
+import { getProvider } from "../../web3";
 
 type TSwapDirection = "BuyToken" | "SellToken"
 

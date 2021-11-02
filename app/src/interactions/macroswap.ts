@@ -1,8 +1,8 @@
 import { Provider, BN, web3 } from "@project-serum/anchor"
 import { NATIVE_MINT, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { SystemProgram, Transaction } from "@solana/web3.js";
-import { getProgram } from "../contracts"
 import { toBN } from "../utils";
+import { getProgram } from "../web3";
 import { accountExists, createATA, getATA, getBasicAccounts } from "./common";
 import { unwrapTx, wrapTx } from "./sol";
 

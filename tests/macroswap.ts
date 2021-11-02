@@ -1,5 +1,5 @@
 import * as anchor from "@project-serum/anchor";
-import { Program, BN, IdlAccounts } from "@project-serum/anchor";
+import { Program, BN } from "@project-serum/anchor";
 import { Token, TOKEN_PROGRAM_ID, NATIVE_MINT } from "@solana/spl-token";
 import {
   SYSVAR_RENT_PUBKEY,
