@@ -1,8 +1,8 @@
 [programs.localnet]
-macroswap = "HppM1iaYCKDMjpdtxg96eRsK45Q3uFhCVhjsNnJa4VgQ"
+macroswap = "FqwbZ8hJwL2uaANW61tXA7JX6KUQq4THhaeUb2AXnMPj"
 
 [programs.devnet]
-macroswap = "HppM1iaYCKDMjpdtxg96eRsK45Q3uFhCVhjsNnJa4VgQ"
+macroswap = "FqwbZ8hJwL2uaANW61tXA7JX6KUQq4THhaeUb2AXnMPj"
 
 [registry]
 url = "https://anchor.projectserum.com"

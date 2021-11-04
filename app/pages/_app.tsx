@@ -1,10 +1,7 @@
 import type { AppProps } from "next/app";
-import { FC, ReactNode } from "react";
+import { ReactNode } from "react";
 import dynamic from "next/dynamic";
 import Layout from "../src/components/layout/Layout";
-// import store from "../src/state";
-import { Provider as StateProvider } from "react-redux";
-// import WalletConnectionProvider from '../src/components/WalletConnectionProvider';
 
 require("@solana/wallet-adapter-react-ui/styles.css");
 require("bootstrap/dist/css/bootstrap.min.css");

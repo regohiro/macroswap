@@ -11,7 +11,7 @@ mod context;
 mod error;
 mod event;
 
-declare_id!("HppM1iaYCKDMjpdtxg96eRsK45Q3uFhCVhjsNnJa4VgQ");
+declare_id!("FqwbZ8hJwL2uaANW61tXA7JX6KUQq4THhaeUb2AXnMPj");
 
 #[program]
 pub mod macroswap {
