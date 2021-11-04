@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Form, FormControl, InputGroup } from "react-bootstrap";
 import SolDropdown from "./SolDropdown";
 import styles from "./SwapInterface.module.css";
@@ -15,6 +15,7 @@ import { getMacroBalance } from "../../interactions/macro";
 import { buyTokenTx, getRate, sellTokenTx } from "../../interactions/macroswap";
 import { Transaction } from "@solana/web3.js";
 import { getProvider, getReadOnlyProvider } from "../../web3";
+import { useNotify } from "../Notify";
 
 type TSwapDirection = "BuyToken" | "SellToken"
 
@@ -30,6 +31,7 @@ const SwapInterface = (): JSX.Element => {
   const [rate, setRate] = useState<number>(0);
 
   const wallet = useWallet();
+  const notify = useNotify();
   const anchorWallet = useAnchorWallet();
   const walletModal = useWalletModal();
   const { connection } = useConnection();
@@ -58,13 +60,15 @@ const SwapInterface = (): JSX.Element => {
     }
   }
 
-  const onClickSubmit = async (
+  const onClickSubmit = useCallback(async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
     if(wallet.connected && wallet.publicKey !== null && anchorWallet){
+      setLoading(true);
       const provider = getProvider(anchorWallet, connection);
       let tx: Transaction;
+      let sig: string = "";
 
       switch(swapDirection){
         case "BuyToken":
@@ -75,12 +79,22 @@ const SwapInterface = (): JSX.Element => {
           break;
       }
 
-      const txHash = await wallet.sendTransaction(tx, connection);
-      console.log(txHash);
+      try {
+        sig = await wallet.sendTransaction(tx, connection);
+        notify('info', 'Transaction sent:', sig);
+
+        await connection.confirmTransaction(sig, 'processed');
+        notify('success', 'Transaction successful!', sig);
+
+      } catch(error: any) {
+        notify('error', `Transaction failed! ${error?.message}`, sig);
+      } finally {
+        setLoading(false);
+      }
     }else{
       walletModal.setVisible(true);
     }
-  }
+  }, [notify, wallet, anchorWallet, swapDirection, input, output, connection, walletModal])
 
   const onClickReload = async () => {
     const provider = getReadOnlyProvider(connection);

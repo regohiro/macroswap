@@ -14,7 +14,7 @@ export const getProvider = (anchorWallet: AnchorWallet, connection: Connection):
 }
 
 export const getReadOnlyProvider = (connection: Connection): Provider => {
-  const wallet = <AnchorWallet>{}; //Empty wallet
+  const wallet = <AnchorWallet>{}; 
   const provider = getProvider(wallet ,connection);
   return provider;
 }
