@@ -1,15 +1,13 @@
 import styles from "./SwapInterface.module.css";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-// import { selectSwap } from "../../state";
+import React from "react";
 import { AiOutlineReload } from "react-icons/ai";
 
 interface IProps {
   onClickReload: () => void;
+  rate: number;
 } 
 
-const RateBox: React.FC<IProps> = ({ onClickReload }) => {
-  // const { swapDirection, value, amount, tokenType } = useSelector(selectSwap);
+const RateBox: React.FC<IProps> = ({ onClickReload, rate }) => {
 
   return (
     <div className={styles.rateBox}>
@@ -22,7 +20,7 @@ const RateBox: React.FC<IProps> = ({ onClickReload }) => {
             />
           </span>
           <span className={styles.rateValue}>
-            1 SOL = 100 MACRO
+            1 SOL = {rate} MACRO
           </span>
         </>
     </div>

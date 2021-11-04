@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Button, Spinner } from "react-bootstrap";
 import styles from "./SwapButton.module.css";
 import { useWallet } from "@solana/wallet-adapter-react";

@@ -145,7 +145,7 @@ const SwapInterface = (): JSX.Element => {
           />
           {swapDirection === "BuyToken" ? <TokenDropdown /> : <SolDropdown />}
         </InputGroup>
-        <RateBox onClickReload={onClickReload} />
+        <RateBox onClickReload={onClickReload} rate={rate}/>
         <SwapButton 
           loading={isLoading || wallet.connecting}
           payable={isPayable}
