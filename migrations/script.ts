@@ -30,7 +30,9 @@ const main = async () => {
   const payer = Keypair.fromSecretKey(secretKey);
   const macroswapAccount = Keypair.generate();
 
-  await airdrop(provider, payer.publicKey, 2 * 10 ** 9);
+  // await airdrop(provider, payer.publicKey, 2 * 10 ** 9);
+
+  console.log("S1");
 
   const macroMint = await Token.createMint(
     provider.connection,
@@ -65,6 +67,8 @@ const main = async () => {
 
   const rate = 100;
 
+  console.log("S2");
+
   const tx = await program.rpc.initialize(bumps, new anchor.BN(rate), {
     accounts: {
       user: provider.wallet.publicKey,
@@ -82,6 +86,8 @@ const main = async () => {
   });
   await connection.confirmTransaction(tx, "confirmed");
 
+  console.log("S3");
+
   const macroAmount = 1_000_000 * 10 ** 9;
   await macroMint.mintTo(
     poolMacro,
@@ -89,6 +95,8 @@ const main = async () => {
     [mintAuthority],
     macroAmount
   );
+
+  console.log("S4");
 
   console.log("pool_wsol: " + poolWsol.toString());
   console.log("pool_macro: " + poolMacro.toString());
