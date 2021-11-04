@@ -12,7 +12,6 @@ import { airdrop, getBalance, mintWrapTransfer, wrap } from "./utils";
 import { Macroswap } from "../target/types/macroswap";
 
 describe("MacroSwap Test", () => {
-  // Configure the client to use the local cluster.
   const provider = anchor.Provider.local();
   const { connection } = provider;
   anchor.setProvider(provider);
@@ -36,7 +35,6 @@ describe("MacroSwap Test", () => {
 
   //User accounts
   const alice = Keypair.generate();
-  const bob = Keypair.generate();
 
   //Other accounts / settings
   const macroswapAccount = Keypair.generate();
@@ -63,17 +61,17 @@ describe("MacroSwap Test", () => {
     );
     macroMintAccount = macroMint.publicKey;
 
-    //Create PDA and its bump for macro token account (pool)
+    //Find PDA and its bump for macro token account (pool)
     const [poolMacroPda, poolMacroBump] = await PublicKey.findProgramAddress(
       [Buffer.from(anchor.utils.bytes.utf8.encode("pool_macro"))],
       program.programId
     );
-    //Create PDA and its bump for wsol token account (pool)
+    //Find PDA and its bump for wsol token account (pool)
     const [poolWsolPda, poolWsolBump] = await PublicKey.findProgramAddress(
       [Buffer.from(anchor.utils.bytes.utf8.encode("pool_wsol"))],
       program.programId
     );
-    //Create PDA and its bump for token accounts authority
+    //Find PDA and its bump for token accounts authority
     const [poolOwnerPda, poolOwnerBump] = await PublicKey.findProgramAddress(
       [Buffer.from(anchor.utils.bytes.utf8.encode("pool_owner"))],
       program.programId
