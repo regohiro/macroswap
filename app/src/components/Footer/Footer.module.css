@@ -1,0 +1,23 @@
+.footer {
+  clear: both;
+  padding: 0;
+  vertical-align: middle;
+  line-height: normal;
+  margin: 0;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  color: #b7b7b7;
+  opacity: 0.5;
+  padding-bottom: 15px; 
+}
+
+#creator {
+  float: left;
+  padding-left: 20px;
+}
+
+#address {
+  float: right;
+  padding-right: 20px;
+}

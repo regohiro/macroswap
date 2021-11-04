@@ -1,11 +1,14 @@
 [programs.localnet]
-macroswap = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+macroswap = "FqwbZ8hJwL2uaANW61tXA7JX6KUQq4THhaeUb2AXnMPj"
+
+[programs.devnet]
+macroswap = "FqwbZ8hJwL2uaANW61tXA7JX6KUQq4THhaeUb2AXnMPj"
 
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/riomain/.config/solana/id.json"
 
 [scripts]

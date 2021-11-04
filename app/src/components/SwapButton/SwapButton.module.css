@@ -1,0 +1,22 @@
+.btn {
+  position: absolute;
+  width: 90%;
+  height: 50px;
+  background-color: #172A42;
+  color: #6DA8FF;
+  margin: 0px auto;
+  bottom: -75px;
+  left: 50%;
+  margin-left: -45%;
+  border-radius: 15px;
+}
+
+.btn:disabled {
+  background-color: #172A42;
+  color: #6DA8FF;
+}
+
+.btn:hover {
+  background-color: #192A40;
+  color: #6DA8FF;
+}
